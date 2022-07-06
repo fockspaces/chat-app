@@ -7,13 +7,21 @@ const $message = document.querySelector("#message");
 
 // template
 const messageTemplate = document.querySelector("#message-template").innerHTML;
-
-
+const locationTemplate = document.querySelector("#location-template").innerHTML;
 
 socket.on("message", (message) => {
   console.log(message);
   const html = Mustache.render(messageTemplate, {
     message,
+  });
+  $message.insertAdjacentHTML("beforeend", html);
+});
+
+// location request to console
+socket.on("LocationMessage", (url) => {
+  console.log(url);
+  const html = Mustache.render(locationTemplate, {
+    url,
   });
   $message.insertAdjacentHTML("beforeend", html);
 });
