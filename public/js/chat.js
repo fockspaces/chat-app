@@ -9,23 +9,21 @@ const $message = document.querySelector("#message");
 const messageTemplate = document.querySelector("#message-template").innerHTML;
 const locationTemplate = document.querySelector("#location-template").innerHTML;
 
-
-
-
 socket.on("message", (message) => {
   console.log(message);
   const html = Mustache.render(messageTemplate, {
     message: message.text,
-    createdAt: moment(message.createdAt).format('h:mm a'),
+    createdAt: moment(message.createdAt).format("h:mm a"),
   });
   $message.insertAdjacentHTML("beforeend", html);
 });
 
 // location request to console
-socket.on("LocationMessage", (url) => {
-  console.log(url);
+socket.on("LocationMessage", (message) => {
+  console.log(message);
   const html = Mustache.render(locationTemplate, {
-    url,
+    url: message.url,
+    createdAt: moment(message.createdAt).format("h:mm a"),
   });
   $message.insertAdjacentHTML("beforeend", html);
 });
@@ -35,7 +33,10 @@ form.addEventListener("submit", (e) => {
   button.setAttribute("disabled", "disabled");
 
   const message = e.target.elements.message.value;
-
+  if (message == "") {
+    button.removeAttribute("disabled");
+    return;
+  }
   socket.emit("sendMessage", message, (error) => {
     button.removeAttribute("disabled");
     input.value = "";
