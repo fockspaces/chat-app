@@ -9,10 +9,14 @@ const $message = document.querySelector("#message");
 const messageTemplate = document.querySelector("#message-template").innerHTML;
 const locationTemplate = document.querySelector("#location-template").innerHTML;
 
+
+
+
 socket.on("message", (message) => {
   console.log(message);
   const html = Mustache.render(messageTemplate, {
-    message,
+    message: message.text,
+    createdAt: moment(message.createdAt).format('h:mm a'),
   });
   $message.insertAdjacentHTML("beforeend", html);
 });
