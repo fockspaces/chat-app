@@ -17,7 +17,7 @@ const { username, room } = Qs.parse(location.search, {
 socket.on("message", (message) => {
   console.log(message);
   const html = Mustache.render(messageTemplate, {
-    username,
+    username: message.username,
     room,
     message: message.text,
     createdAt: moment(message.createdAt).format("h:mm a"),
@@ -29,13 +29,18 @@ socket.on("message", (message) => {
 socket.on("LocationMessage", (message) => {
   console.log(message);
   const html = Mustache.render(locationTemplate, {
-    username,
+    username: message.username,
     room,
     url: message.url,
     createdAt: moment(message.createdAt).format("h:mm a"),
   });
   $message.insertAdjacentHTML("beforeend", html);
 });
+
+socket.on('roomData', ({room, users}) => {
+  console.log(room);
+  console.log(users);
+})
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -81,4 +86,10 @@ locat.addEventListener("click", () => {
   });
 });
 
-socket.emit("join", { username, room });
+socket.emit("join", { username, room }, (error) => {
+  if (error) {
+    alert(error);
+    location.href = '/'
+  }
+
+});
